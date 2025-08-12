@@ -1,4 +1,4 @@
 # Parallel MCMC
-![Demo](https://github.com/user-attachments/assets/a25be43c-ec56-4ffa-a1e5-28d4b5c2fcdd)
+![Demo](https://github.com/user-attachments/assets/763dbcbb-7256-48d4-8412-520babf08a7f)
 
 Parallelizing MCMC across the chain length via parallel Newton's method.

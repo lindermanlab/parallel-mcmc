@@ -59,7 +59,7 @@ states_par, iters = run_parallel(key, initial_state, yinit_guess, params)
 print(f"Parallel samplers converged in {iters} iters")
 
 # visualize last 10K
-dim = 0
+dim = 1
 plt.figure()
 plt.plot(states_seq[:,dim], 'r', label="sequential", alpha=0.8)
 plt.plot(states_par[:,dim], 'b:', label="parallel", alpha=0.8)
@@ -68,7 +68,7 @@ plt.ylabel("states")
 plt.xlim([chain_length-10010, chain_length+10])
 plt.title("Parallel samples at convergence vs. sequential samples")
 plt.legend()
-
+plt.show()
 # get full sample trace 
 max_iter = iters+1
 sampler = samplers.ParallelHMC(target_log_prob, D, chain_length, max_iter, 

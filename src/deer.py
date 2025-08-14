@@ -309,26 +309,6 @@ def deer_iteration_helper(
 
         return err, yt_next, gts, iiter + 1
 
-    # key = jr.PRNGKey(13)
-    # def scale_matrices(matrix, key, threshold=1.0):
-    #     safety_factor = 100
-    #     rv = jr.normal(key, matrix.shape[0])
-    #     norm_rv = rv / jnp.linalg.norm(rv)
-    #     amp = matrix @ norm_rv 
-    #     # amp = jnp.linalg.norm(amp)
-    #     norm_rv = amp / jnp.linalg.norm(amp)
-    #     amp = matrix @ norm_rv
-    #     amp = jnp.linalg.norm(amp)
-    #     needs_scaling = amp > threshold
-    #     scale_factor = jnp.where(needs_scaling, 
-    #                         amp * safety_factor,
-    #                         1.0)
-    #     return matrix / scale_factor
-    # # def scale_matrices(matrix, key):
-    # #     scale_factor = jnp.linalg.norm(matrix)
-    # #     return matrix / scale_factor
-    # batch_scale_matrices = jax.vmap(scale_matrices)
-
     # use the scan function to get the full trace
     def scan_func(iter_inp, args):
         err, yt, gt_, iiter = iter_inp

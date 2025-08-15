@@ -38,7 +38,8 @@ examples/               Example scripts
 
 ## Examples
 
-We include four example scripts.
+We include four example scripts that we describe below. Additionally, we provide an interactive Google Colab example [here](https://colab.research.google.com/drive/1TLd8nOw5VBK8olQLiuSFcY7_yYVYluqd?usp=sharing) 
+demonstrating wall-clock speedups when the Colab is run on an A100 instance. 
 - **`examples/run_mala_german_credit.py`** - Runs parallel MALA using stochastic quasi DEER targeting a logistic regression model of the German Credit dataset. 
   ```
   python examples/run_mala_german_credit.py

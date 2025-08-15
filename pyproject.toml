@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parallel-mcmc"
+version = "0.1"
+description = "Algorithms for Parallel Evaluation of MCMC Samplers"
+requires-python = ">=3.11"
+readme = "README.md"
+license = {file="LICENSE"}
+dependencies = [
+    "tensorflow",
+    "tensorflow-probability",
+    "inference_gym",
+    "tensorflow_datasets",
+    "matplotlib",
+    "jaxtyping"
+]
+authors = [
+    {name="David Zoltowski"}, 
+    {name="Skyler Wu"}, 
+    {name="Xavier Gonzalez"}, 
+    {name="Leo Kozachkov"}, 
+    {name="Scott Linderman"}
+]
+maintainers = [
+    {name="David Zoltowski", email="dzoltow@stanford.edu"},
+]
+
+[project.urls]
+repository = "https://github.com/lindermanlab/parallel-mcmc"
+homepage = "https://github.com/lindermanlab/parallel-mcmc"
+
+[tool.setuptools.packages.find]
+where = ["."]

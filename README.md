@@ -39,13 +39,21 @@ examples/               Example scripts
 ## Examples
 
 We include four example scripts.
-- **`examples/run_mala_german_credit.py`** - Runs parallel MALA targeting a logistic regression model of the German Credit dataset. 
+- **`examples/run_mala_german_credit.py`** - Runs parallel MALA using stochastic quasi DEER targeting a logistic regression model of the German Credit dataset. 
   ```
   python examples/run_mala_german_credit.py
   ```
-- **`examples/run_mala_german_credit.py`** - Runs parallel MALA targeting a logistic regression model of the German Credit dataset. 
+- **`examples/run_hmc_rosenbrock.py`** - Runs parallel HMC using DEER with damping (ELK) targeting the Rosenbrock distribution.
   ```
-  python examples/run_mala_german_credit.py
+  python examples/run_hmc_rosenbrock.py
+  ```
+- **`examples/run_gibbs_eight_schools.py`** - Runs a parallel Gibbs sampler targeting the posterior of a hierarchical linear model. 
+  ```
+  python examples/run_gibbs_eight_schools.py
+  ```
+- **`examples/run_mala_mog.py`** - Runs parallel MALA using quasi DEER targeting a 2D multimodal mixture of Gaussians.
+  ```
+  python examples/run_mala_mog.py
   ```
 
 ## Citation

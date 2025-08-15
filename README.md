@@ -23,7 +23,29 @@ Finally, install the package and its dependencies with:
 pip install -e .
 ```
 
+## Repository Structure 
+The structure of the primary source code and examples is:
+```
+src/                    Source code for DEER algorithms and samplers.
+├── samplers.py             Defines parallel MALA and HMC samplers.
+├── qdeer.py                Optimized stochastic quasi DEER implementation.
+├── deer.py                 DEER implementation.
+├── elk.py                  Quasi ELK implementation.
+├── qdeer_leapfrog.py       Block quasi-DEER for parallel leapfrog. 
+├── windowed_qdeer.py       Quasi DEER implementation with windowing.
+examples/               Example scripts
+```
+
 ## Examples
 
+We include four example scripts.
+- **`examples/run_mala_german_credit.py`** - Runs parallel MALA targeting a logistic regression model of the German Credit dataset. 
+  ```
+  python examples/run_mala_german_credit.py
+  ```
+- **`examples/run_mala_german_credit.py`** - Runs parallel MALA targeting a logistic regression model of the German Credit dataset. 
+  ```
+  python examples/run_mala_german_credit.py
+  ```
 
 ## Citation

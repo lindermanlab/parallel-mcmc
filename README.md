@@ -58,3 +58,14 @@ demonstrating wall-clock speedups when the Colab is run on an A100 instance.
   ```
 
 ## Citation
+
+```
+@article{zoltowski2025parallelmcmc,
+      title={Parallelizing MCMC Across the Sequence Length}, 
+      author={David M. Zoltowski and Skyler Wu and Xavier Gonzalez and Leo Kozachkov and Scott W. Linderman},
+      year={2025},
+      eprint={2508.18413},
+      archivePrefix={arXiv},
+      primaryClass={stat.CO},
+}
+```

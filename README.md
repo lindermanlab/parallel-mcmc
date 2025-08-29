@@ -1,5 +1,5 @@
 # Parallel MCMC
-![Image](https://github.com/lindermanlab/parallel-mcmc/static/rosenbrock.gif)
+![Image](https://github.com/lindermanlab/parallel-mcmc/blob/01192c587cb74cf2c3733402d0a8e8adab637714/static/rosenbrock.gif)
 
 **Parallelizing MCMC across the Sequence Length**\
 *David M. Zoltowski\*, Skyler Wu\*, Xavier Gonzalez, Leo Kozachkov, Scott W. Linderman*\

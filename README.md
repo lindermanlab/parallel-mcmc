@@ -3,9 +3,12 @@
 
 **Parallelizing MCMC across the Sequence Length**\
 *David M. Zoltowski\*, Skyler Wu\*, Xavier Gonzalez, Leo Kozachkov, Scott W. Linderman*\
-arXiv
+Paper: https://arxiv.org/abs/2508.18413
+To appear in NeurIPS 2025
 
-This repository contains code for parallelizing MCMC across the chain length via parallel Newton's method.
+This repository contains code for parallelizing MCMC across the chain length via parallel Newton's method. 
+
+**Colab Demo:** An interactive Colab demo is available [here!](https://colab.research.google.com/drive/1TLd8nOw5VBK8olQLiuSFcY7_yYVYluqd?usp=sharing) 
 
 ## Installation
 We recommend installing packages in a virtual environment with Python version `>=3.11`. First, run:

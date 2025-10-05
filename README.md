@@ -16,8 +16,9 @@ We recommend installing packages in a virtual environment with Python version `>
 pip install -U pip
 ```
 Then install JAX via the instructions [here](https://docs.jax.dev/en/latest/installation.html). The algorithms should be 
-run on GPU to achieve efficiency gains. However, the code is supported on CPU for testing purposes. We have tested the 
-algorithm on JAX version 0.6.2 that can be installed via:
+run on GPU to achieve efficiency gains. However, the code is supported on CPU for testing and investigation. 
+
+We have tested the package on JAX versions 0.5.3 and 0.6.2. For example, version 0.6.2 can be installed via:
 ```
 pip install -U "jax[cuda12]==0.6.2" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
 ```

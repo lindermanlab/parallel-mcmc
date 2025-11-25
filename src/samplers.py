@@ -20,7 +20,8 @@ class ParallelMALA:
     
     # our constructor
     def __init__(self, log_prob, dim, chain_length, max_iter, alg="quasi",
-                 clip_val=1.0, damp_factor=1.0, full_trace=False, basis_transformation=False):
+                 clip_val=1.0, damp_factor=1.0, full_trace=False, 
+                 basis_transformation=False, window_size=None):
         '''
         Args:
             logp - unnormalized log-posterior function that ONLY takes in theta as argument. Use partial.
@@ -42,6 +43,8 @@ class ParallelMALA:
         self.damp_factor = damp_factor
         self.full_trace = full_trace 
         self.basis_transformation = basis_transformation
+        self.window_size = window_size
+        assert self.window_size <= self.chain_length
         
     def mala_fxn_for_seq(self, state, driver, params):
         step_size = params["step_size"]
@@ -91,6 +94,24 @@ class ParallelMALA:
 
         out_states, iters = qdeer.seq1d(
             self.mala_fxn_for_deer, initial_state, drivers, params, 
+            yinit_guess=yinit_guess, max_iter=self.max_iter, clip_val=self.clip_val,
+            full_trace=self.full_trace, damp_factor=self.damp_factor
+        )
+
+        if self.basis_transformation:
+            out_states = jnp.einsum('...ij, ...j -> ...i', params["basis"], out_states)
+
+        return out_states, iters 
+
+    def run_parallel_mala_window(self, key, initial_state, yinit_guess, params):
+        drivers = jr.split(key, (self.chain_length,))
+
+        if self.basis_transformation:
+            initial_state = params["basis"].T @ initial_state 
+            yinit_guess = jnp.einsum('...ij, ...j -> ...i', params["basis"].T, yinit_guess)
+
+        out_states, iters = windowed_qdeer.seq1d(
+            self.mala_fxn_for_deer, initial_state, drivers, params, self.window_size,
             yinit_guess=yinit_guess, max_iter=self.max_iter, clip_val=self.clip_val,
             full_trace=self.full_trace, damp_factor=self.damp_factor
         )

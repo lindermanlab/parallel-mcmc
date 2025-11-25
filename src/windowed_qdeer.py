@@ -181,14 +181,11 @@ def diagonal_deer_iteration_helper(
     tol = 1e-7 if dtype == jnp.float64 else 1e-4
     rtol = 1e-4 if dtype == jnp.float64 else 1e-3
 
-
     def iter_func(
         iter_inp: Tuple[jnp.ndarray, jnp.ndarray, List[jnp.ndarray], jnp.ndarray]
     ) -> Tuple[jnp.ndarray, jnp.ndarray, List[jnp.ndarray], jnp.ndarray]:
         t, yt, y_init, iiter = iter_inp # orig
 
-        # import pdb; pdb.set_trace()
-        # fix t to never go above t-window
         t = jnp.minimum(t, T-window)
         yt_win = jax.lax.dynamic_slice(yt, (t, 0), (window, yt.shape[-1])) #yt[t:(t+window)]
         xinp_win = jax.lax.dynamic_slice(xinput, (t, 0), (window, xinput.shape[-1]))
@@ -208,35 +205,27 @@ def diagonal_deer_iteration_helper(
 
         # relative tolerance
         err = jnp.max( jnp.abs(yt_next_win - yt_win) - rtol * jnp.abs(yt_win), axis=-1)
-        min_idx = jnp.argmax(err > tol, axis=0).astype(int)
-        min_idx = jnp.where(jnp.any(err > tol, axis=0), min_idx, len(err))
-        stride = min_idx
+        mask = err > tol                    # shape: (window,)
+        first_violation = jnp.argmax(mask)  # 0 if none; that's why we fix below
+        stride = jnp.where(mask.any(), first_violation, window)
 
         # update yt 
-        # yt = yt.at[t:(t+window)].set(yt_next_win) 
         yt = jax.lax.dynamic_update_slice(yt, yt_next_win, (t,0))
-
-        # set all values after t+window to the final value - not working?
-        yt = set_after_index_2d(yt, t+window+1, yt[t+window])
 
         # stride - compute minimum index in the current window that has not converged
         t = t + stride
 
+        new_t = jnp.minimum(t, T - window)
+        y_init_index = new_t - 1
+        y_init = jnp.where(new_t > 0, yt[y_init_index], y_init)
 
-        init_t = jnp.minimum(t, T-window)
-        y_init = yt[init_t-1]
-
-        yt = set_after_index_2d(yt, init_t+window, yt[init_t+window-stride-1])
-        # yt = set_after_index_2d(yt, init_t+window, jnp.mean(yt_next_win, axis=0))
-
+        #TODO: warm start rest of sequence?
 
         return t, yt, y_init, iiter + 1
 
     def scan_func(iter_inp, args):
         t, yt, y_init, iiter = iter_inp # orig
 
-        # import pdb; pdb.set_trace()
-        # fix t to never go above t-window
         t = jnp.minimum(t, T-window)
         yt_win = jax.lax.dynamic_slice(yt, (t, 0), (window, yt.shape[-1])) #yt[t:(t+window)]
         xinp_win = jax.lax.dynamic_slice(xinput, (t, 0), (window, xinput.shape[-1]))
@@ -256,27 +245,21 @@ def diagonal_deer_iteration_helper(
 
         # relative tolerance
         err = jnp.max( jnp.abs(yt_next_win - yt_win) - rtol * jnp.abs(yt_win), axis=-1)
-        min_idx = jnp.argmax(err > tol, axis=0).astype(int)
-        min_idx = jnp.where(jnp.any(err > tol, axis=0), min_idx, len(err))
-        stride = min_idx
+        mask = err > tol                    # shape: (window,)
+        first_violation = jnp.argmax(mask)  # 0 if none; that's why we fix below
+        stride = jnp.where(mask.any(), first_violation, window)
 
         # update yt 
-        # yt = yt.at[t:(t+window)].set(yt_next_win) 
         yt = jax.lax.dynamic_update_slice(yt, yt_next_win, (t,0))
-
-        # set all values after t+window to the final value - not working?
-        # yt = set_after_index_2d(yt, t+window+1, yt[t+window-1][None, :] * jnp.ones((yt.shape[0],1)))
-        # yt = jax.lax.dynamic_update_slice(yt, yt[t+window-1], (t+window,0))
-        # yt = yt.at[t+window+1:].set(yt[t+window])
 
         # stride - compute minimum index in the current window that has not converged
         t = t + stride
 
-        init_t = jnp.minimum(t, T-window)
-        y_init = yt[init_t-1]
+        new_t = jnp.minimum(t, T - window)
+        y_init_index = new_t - 1
+        y_init = jnp.where(new_t > 0, yt[y_init_index], y_init)
 
-        # set all values after t+window to the final value - not working?
-        yt = set_after_index_2d(yt, init_t+window, yt[init_t+window-stride-1])
+        #TODO: warm start rest
 
         new_carry = t, yt, y_init, iiter + 1
         return new_carry, yt

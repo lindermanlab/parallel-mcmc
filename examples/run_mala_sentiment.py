@@ -15,7 +15,6 @@ import tensorflow_datasets as tfds
 from tensorflow_probability.substrates import jax as tfp
 tfd = tfp.distributions
 
-# TODO: remove this?
 import matplotlib.pyplot as plt 
 plt.ion()
 
@@ -35,6 +34,7 @@ logp = partial(joint_log_prob, X, y)
 D = X.shape[-1]
 target_log_prob_and_grad = jax.value_and_grad(logp)
 
+# compute basis using feature matrix
 def compute_P(X):
     return jnp.linalg.svd(X.T @ X)[0]
 P = compute_P(X)
@@ -46,7 +46,6 @@ step_size = 0.015
 max_iter = 1024 # max number of parallel iters
 window_size = 256 #256
 key, *skeys = jr.split(key, 3)
-# initial_state = 0.1 * jr.normal(skeys[0], (batch_size, D,))
 initial_state = 1.0 / jnp.sqrt(D) * jr.normal(skeys[0], (batch_size, D,))
 batch_keys = jr.split(skeys[0], batch_size)
 
@@ -84,3 +83,6 @@ plt.ylabel("dim " + str(dim))
 plt.title("Parallel samples at convergence vs. sequential samples")
 plt.legend()
 plt.show()
+
+mae = jnp.max(jnp.abs(states_par-states_seq))
+print("Max Abs Error: ", mae)

@@ -44,7 +44,8 @@ class ParallelMALA:
         self.full_trace = full_trace 
         self.basis_transformation = basis_transformation
         self.window_size = window_size
-        assert self.window_size <= self.chain_length
+        if self.window_size is not None:
+            assert 1 <= self.window_size <= self.chain_length
         
     def mala_fxn_for_seq(self, state, driver, params):
         step_size = params["step_size"]

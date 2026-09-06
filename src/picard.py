@@ -17,7 +17,10 @@ def picard_step(func, y0, yt, xinp, params):
     fs = jax.vmap(func, in_axes=(0, 0, None))(yt_prev, xinp, params)
     bs = fs - yt_prev
     bs = bs.at[0].set(fs[0])  # first element already includes y0
-    return jnp.cumsum(bs, axis=0)
+    yt_next = jnp.cumsum(bs, axis=0)
+    # same clipping / nan handling as deer.deer_iteration_helper (clip_ytnext=True)
+    yt_next = jnp.clip(yt_next, a_min=-1e8, a_max=1e8)
+    return jnp.where(jnp.isnan(yt_next), 0.0, yt_next)
 
 
 def seq1d(
@@ -49,10 +52,7 @@ def seq1d(
     def iter_func(carry):
         _, yt, iiter = carry
         yt_next = picard_step(func, y0, yt, xinp, params)
-        # same clipping / nan handling as deer.deer_iteration_helper (clip_ytnext=True),
-        # applied before computing err so a nan cannot terminate the while_loop early
-        yt_next = jnp.clip(yt_next, a_min=-1e8, a_max=1e8)
-        yt_next = jnp.where(jnp.isnan(yt_next), 0.0, yt_next)
+        # nans are already removed in picard_step, so a nan err cannot end the while_loop early
         err = jnp.max(jnp.abs(yt_next - yt) - rtol * jnp.abs(yt))
         return err, yt_next, iiter + 1
 

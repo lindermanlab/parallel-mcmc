@@ -1,0 +1,43 @@
+{
+  "gpu": "NVIDIA A100-SXM4-80GB",
+  "jax": "0.6.2",
+  "chain_length": 100000,
+  "num_leapfrog_steps": 8,
+  "epsilon": 0.5,
+  "damp_factor": 0.55,
+  "n_repeats": 5,
+  "methods": {
+    "sequential": {
+      "time_to_convergence": 22.59595453599468,
+      "iters": 100000,
+      "time_per_iter": 0.0002259595453599468,
+      "time_per_iter_standalone": 0.00014493893831968307,
+      "converged": true,
+      "max_err": 0.0
+    },
+    "deer": {
+      "time_to_convergence": 0.13534187409095466,
+      "iters": 139,
+      "time_per_iter": 0.0007469795644283294,
+      "time_per_iter_amortized": 0.00097368254741694,
+      "converged": true,
+      "max_err": 0.0012378692626953125
+    },
+    "quasi_deer": {
+      "time_to_convergence": 0.3430086139123887,
+      "iters": 534,
+      "time_per_iter": 0.0006338328123092652,
+      "time_per_iter_amortized": 0.0006423382283003533,
+      "converged": true,
+      "max_err": 0.0014960765838623047
+    },
+    "picard": {
+      "time_to_convergence": 28.212649425957352,
+      "iters": 97311,
+      "time_per_iter": 0.0002358979545533657,
+      "time_per_iter_amortized": 0.0002899225105687677,
+      "converged": true,
+      "max_err": 0.00016106665134429932
+    }
+  }
+}

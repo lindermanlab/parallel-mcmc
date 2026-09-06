@@ -7,7 +7,7 @@ from functools import partial
 
 # core DEER + QDEER algorithms
 import src
-from src import deer, qdeer, windowed_qdeer, elk
+from src import deer, qdeer, windowed_qdeer, elk, picard
 
 from tensorflow_probability.substrates import jax as tfp
 tfd = tfp.distributions
@@ -226,5 +226,16 @@ class ParallelHMC:
 
         # if self.basis_transformation:
         #     out_states = jnp.einsum('...ij, ...j -> ...i', params["basis"], out_states)
+
+        return out_states, iters
+
+    def run_picard_hmc(self, key, initial_state, yinit_guess, params):
+        drivers = jr.split(key, (self.chain_length,))
+
+        out_states, iters = picard.seq1d(
+            self.hmc_fxn_for_deer, initial_state, drivers, params,
+            yinit_guess=yinit_guess, max_iter=self.max_iter,
+            full_trace=self.full_trace
+        )
 
         return out_states, iters 

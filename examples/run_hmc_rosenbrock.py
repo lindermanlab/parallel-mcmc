@@ -48,6 +48,7 @@ sampler = samplers.ParallelHMC(target_log_prob, D, chain_length, max_iter,
 
 run_sequential = jax.jit(sampler.run_sequential_hmc)
 run_parallel = jax.jit(sampler.run_parallel_hmc)
+run_picard = jax.jit(sampler.run_picard_hmc)
 
 states_seq = run_sequential(key, initial_state, params)
 
@@ -56,17 +57,27 @@ print("Accept ratio: ", accept_ratio)
 
 yinit_guess = initial_state[None, :] * jnp.ones((chain_length, D))
 states_par, iters = run_parallel(key, initial_state, yinit_guess, params)
-print(f"Parallel samplers converged in {iters} iters")
+print(f"Parallel (DEER) sampler: {iters} iters (converged: {iters < max_iter})")
+states_pic, iters_pic = run_picard(key, initial_state, yinit_guess, params)
+print(f"Picard sampler: {iters_pic} iters (converged: {iters_pic < max_iter})")
+
+# compare parallel methods: wall-clock (post-compilation) and max error vs. sequential
+t0 = time.time(); run_parallel(key, initial_state, yinit_guess, params)[0].block_until_ready()
+print(f"DEER time: {time.time()-t0:.3f}s, max error vs. sequential: {jnp.max(jnp.abs(states_par - states_seq)):.3e}")
+t0 = time.time(); run_picard(key, initial_state, yinit_guess, params)[0].block_until_ready()
+print(f"Picard time: {time.time()-t0:.3f}s, max error vs. sequential: {jnp.max(jnp.abs(states_pic - states_seq)):.3e}")
 
 # visualize last 10K
 dim = 1
 plt.figure()
 plt.plot(states_seq[:,dim], 'r', label="sequential", alpha=0.8)
-plt.plot(states_par[:,dim], 'b:', label="parallel", alpha=0.8)
+plt.plot(states_par[:,dim], 'b:', label="parallel (DEER)", alpha=0.8)
+plt.plot(states_pic[:,dim], 'g--', label="picard", alpha=0.8)
 plt.xlabel("sample iteration")
 plt.ylabel("states")
 plt.xlim([chain_length-10010, chain_length+10])
-plt.title("Parallel samples at convergence vs. sequential samples")
+plt.ylim([states_seq[:,dim].min()-1, states_seq[:,dim].max()+1])  # picard may diverge off-axis
+plt.title("Parallel (DEER) and Picard samples vs. sequential")
 plt.legend()
 plt.show()
 # get full sample trace 
